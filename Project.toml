@@ -7,32 +7,23 @@ authors = ["John Tinnerholm <john.tinnerholm@liu.se>"]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
-ImmutableList = "4a558cac-c1ed-11e9-20da-3584bcd8709a"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-MetaModelica = "9d7f2a79-07b5-5542-8b19-c0100dda6b06"
 OM = "2f925a0b-2436-437b-858e-49aee461894b"
 OMBackend = "9400bd5f-7561-42f6-8760-03756753da50"
 OMFrontend = "b10394b5-f439-4073-a0c5-e09cb00cf46c"
-OMParser = "11f87224-cae7-4e99-a924-e50d12f62c59"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
 # Sibling OM.jl packages live in-tree. Resolve against the working copies.
 [sources]
-ImmutableList  = { path = "../ImmutableList.jl" }
-MetaModelica   = { path = "../MetaModelica.jl" }
 OM             = { path = ".." }
 OMBackend      = { path = "../OMBackend.jl" }
 OMFrontend     = { path = "../OMFrontend.jl" }
-OMParser       = { path = "../OMParser.jl" }
 
 [compat]
 julia = "1.13"
-ImmutableList = "0.4.2, 0.5, 0.6"
-MetaModelica = "0.4.2, 0.5"
 OM = "0.10"
 OMBackend = "0.9, 0.10"
 OMFrontend = "2"
-OMParser = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
