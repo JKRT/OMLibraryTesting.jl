@@ -128,6 +128,17 @@ end
     @test_throws ErrorException OLT.merge_shards([result.(s1), result.(s1[1:1])])
 end
 
+@testset "installed_library_list: the libraries of a LIB: list" begin
+    @test OLT.installed_library_list("LIB:Buildings@13.0.0,Modelica@4.1.0") ==
+          [("Buildings", "13.0.0"), ("Modelica", "4.1.0")]
+    @test OLT.installed_library_list("LIB: Buildings@13.0.0 , Modelica") == [("Buildings", "13.0.0"), ("Modelica", "")]
+    @test isempty(OLT.installed_library_list("MSL:4.1.0"))
+    @test_throws ArgumentError OLT.installed_library_list("LIB:")
+    @test_throws ArgumentError OLT.installed_library_list("LIB:Buildings@")
+    @test_throws ArgumentError OLT.installed_library_list("LIB:Buildings@13.0.0@1")
+    @test OLT._msl_kwargs("MSL:3.2.3") == (; MSL_Version = "MSL:3.2.3")   # bundled: no installed library
+end
+
 #= A worker is recycled by the measure the footprint watchdog kills by (top's MEM on macOS), not ps's
    resident size: they differ in both directions, and coverage 26's workers passed the 8 GB watchdog below
    6 GB resident. =#

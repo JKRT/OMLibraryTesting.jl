@@ -56,7 +56,7 @@ OMLibraryTesting.jl/
 ├── models/
 │   ├── models.toml           # Per-model overrides (atol, reltol, expected phase, signal mapping), MSL 3.2.3
 │   ├── models_4.1.0.toml     # The same for MSL 4.1.0
-│   └── experiments_Modelica_<version>.txt  # The experiment models omc lists (record_experiments)
+│   └── experiments_<library>_<version>.txt # The experiment models omc lists (record_experiments): Modelica, Buildings
 ├── reference/
 │   ├── csv/                  # Dymola reference CSVs (MAP-LIB, MSL 3.2.3)
 │   ├── signals/              # Per-model comparisonSignals.txt files
@@ -91,6 +91,14 @@ results = OMLibraryTesting.run_coverage(model = "Modelica.Thermal.HeatTransfer.E
 # (reference/4.1.0/); OMFrontend bundles 3.2.3 and 4.1.0 as single files (the resources a model
 # reads come from the installed library: ~/.openmodelica/libraries, Modelica 4.1.0)
 results = OMLibraryTesting.run_coverage(msl_version = "MSL:4.1.0")
+
+# Another library's experiment models (models/experiments_Buildings_13.0.0.txt, 1805 models): `library`
+# and `version` select the experiment list, "LIB:Name@version,..." the installed libraries
+# (~/.openmodelica/libraries) every model is flattened with. No registry or reference data: through
+# simulate.
+results = OMLibraryTesting.run_coverage(library = "Buildings", version = "13.0.0",
+    msl_version = "LIB:Buildings@13.0.0,Modelica@4.1.0,ModelicaServices@4.1.0,Complex@4.1.0",
+    to_phase = OMLibraryTesting.SIMULATE, timeout = 300.0, n_workers = 2)
 
 # Generate an HTML report
 OMLibraryTesting.generate_report(results)

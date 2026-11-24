@@ -354,13 +354,47 @@ function _bounded_showerror(@nospecialize(e), cap::Int = 500)::String
 end
 
 """
+    installed_library_list(msl_version) -> Vector{Tuple{String, String}}
+
+The installed libraries an `msl_version` of the form `"LIB:Name@version,Name@version,..."` names, as
+`(name, version)` pairs in its order; a name without `@version` is `(name, "")`, the first installed
+version. Any other `msl_version` names none.
+
+```julia
+installed_library_list("LIB:Buildings@13.0.0,Modelica@4.1.0")  # [("Buildings", "13.0.0"), ("Modelica", "4.1.0")]
+installed_library_list("MSL:4.1.0")                            # []
+```
+"""
+function installed_library_list(msl_version::String)::Vector{Tuple{String, String}}
+    local list::Vector{Tuple{String, String}} = Tuple{String, String}[]
+    startswith(msl_version, "LIB:") || return list
+    for entry::SubString{String} in split(msl_version[5:end], ',')
+        local parts::Vector{SubString{String}} = split(strip(entry), '@')
+        (length(parts) <= 2 && all(!isempty, parts)) ||
+            throw(ArgumentError("not a library (Name or Name@version) in $(repr(msl_version)): $(repr(entry))"))
+        push!(list, (String(parts[1]), length(parts) == 2 ? String(parts[2]) : ""))
+    end
+    return list
+end
+
+"""
     _msl_kwargs(msl_version) -> NamedTuple
 
 How OM loads the MSL of `msl_version`: a version bundled with OMFrontend
 (`lib/Modelica/MSL_<x>_<y>_<z>.mo`) by `MSL_Version`, any other from the installed
 libraries (`OM.loadInstalledLibrary`, which brings ModelicaServices and Complex along).
+`"LIB:Name@version,..."` loads the installed libraries it names (`installed_library_list`):
+another library's models with the libraries they use, e.g.
+`"LIB:Buildings@13.0.0,Modelica@4.1.0,ModelicaServices@4.1.0,Complex@4.1.0"`.
 """
 function _msl_kwargs(msl_version::String)::NamedTuple
+    if startswith(msl_version, "LIB:")
+        local keys::Vector{String} = String[]
+        for library::Tuple{String, String} in installed_library_list(msl_version)
+            push!(keys, OM.loadInstalledLibrary(library[1]; version = isempty(library[2]) ? nothing : library[2]))
+        end
+        return (; libraries = keys)
+    end
     local bundled = joinpath(pkgdir(OMFrontend), "lib", "Modelica",
                              replace(msl_version, r"[.:]" => "_") * ".mo")
     isfile(bundled) && return (; MSL_Version = msl_version)
@@ -843,7 +877,9 @@ Each model runs on an isolated worker process with an enforced timeout.
 (3.2.3, 4.0.0) is loaded from there, any other from the installed libraries
 (`OM.loadInstalledLibrary`). `version` (its library version by default) selects the
 experiment list, `overrides` the registry and, beside it, the reference data
-(`default_models_path(version)`, `reference_dir`).
+(`default_models_path(version)`, `reference_dir`). Another library's models: `library` and
+`version` name it (`library = "Buildings", version = "13.0.0"`), and `msl_version` lists the
+installed libraries to load, `"LIB:Buildings@13.0.0,Modelica@4.1.0,..."` (`installed_library_list`).
 
 Optionally filter by `domain` regex, single `model` name, or general `filter` regex.
 `shard = (k, n)` runs the `k`-th of every `n` of those models (`shard_specs`), for a run split
