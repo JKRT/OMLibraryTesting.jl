@@ -32,7 +32,7 @@ Measured 2026-11-19 on 425 MSL 3.2.3 example models: frontend 423 (99.5 %), back
 <!-- coverage:end -->
 
 <!-- coverage-4.1.0:begin (scripts/publish_coverage.jl) -->
-Measured 2026-11-19 on 534 MSL 4.1.0 example models: frontend 532 (99.6 %), backend 529 (99.1 %), simulate 519 (97.2 %), validate 509 (95.3 %). Per domain and what stops the rest: [docs/COVERAGE_4.1.0.md](docs/COVERAGE_4.1.0.md).
+Measured 2026-11-25 on 534 MSL 4.1.0 example models: frontend 533 (99.8 %), backend 530 (99.3 %), simulate 524 (98.1 %), validate 512 (95.9 %). Per domain and what stops the rest: [docs/COVERAGE_4.1.0.md](docs/COVERAGE_4.1.0.md).
 <!-- coverage-4.1.0:end -->
 
 Every published run, by date, with the trend: the [coverage site](https://openmodelica.github.io/OMLibraryTesting.jl/) (MSL 3.2.3; MSL 4.1.0 in [msl-4.1.0/](https://openmodelica.github.io/OMLibraryTesting.jl/msl-4.1.0/)).
