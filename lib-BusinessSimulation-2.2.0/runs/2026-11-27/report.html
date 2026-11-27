@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>BusinessSimulation 2.2.0 - OM.jl Pipeline Test Results</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         margin: 2em; background: #fff; color: #333; }
+  h1 { margin-bottom: 0.2em; }
+  .meta { color: #666; font-size: 0.9em; margin-bottom: 0.5em; }
+  .meta code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+  .changelog { color: #555; font-size: 0.9em; margin-bottom: 1.5em; }
+  .summary-table { border-collapse: collapse; margin-bottom: 2em; }
+  .summary-table th, .summary-table td { border: 1px solid #ccc; padding: 6px 16px; text-align: right; }
+  .summary-table th { background: #f5f5f5; text-align: left; }
+  .summary-table td:last-child { font-weight: bold; }
+  table.results { border-collapse: collapse; width: 100%; }
+  table.results th { border: 1px solid #ccc; padding: 4px 10px; background: #f5f5f5;
+                     text-align: left; font-size: 0.85em; text-transform: uppercase; }
+  table.results td { border: 1px solid #ccc; padding: 4px 10px; font-size: 0.9em; }
+  .model-name { font-family: monospace; font-size: 0.85em; }
+  .ok { background: #d4edda; color: #155724; text-align: center; }
+  .fail { background: #f8d7da; color: #721c24; text-align: center; cursor: pointer; }
+  .fail[data-error]:hover { text-decoration: underline dotted; }
+  #error-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+                 z-index: 1000; align-items: center; justify-content: center; }
+  #error-modal.open { display: flex; }
+  #error-modal-box { background: #fff; border-radius: 6px; padding: 1.5em 2em;
+                     max-width: 70vw; max-height: 80vh; overflow-y: auto;
+                     box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative; }
+  #error-modal-close { position: absolute; top: 0.6em; right: 0.8em;
+                       font-size: 1.3em; cursor: pointer; color: #555; border: none;
+                       background: none; }
+  #error-modal-close:hover { color: #000; }
+  #error-modal-text { font-family: monospace; font-size: 0.85em; white-space: pre-wrap;
+                      color: #721c24; margin-top: 0.5em; }
+  .na { color: #888; text-align: center; }
+  .time { text-align: right; color: #666; font-family: monospace; }
+  .broken-row { opacity: 0.5; }
+  .broken-row td { font-style: italic; }
+  .domain-header td { background: #e9ecef; font-size: 0.85em; padding: 6px 10px; }
+      .sig-link { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                  font-size: 0.85em; margin-left: 0.6em; color: #0366d6; text-decoration: none; white-space: nowrap; }
+      .sig-link:hover { text-decoration: underline; }
+      .sig-link.sig-has-fail { color: #b31d28; font-weight: 600; }
+      .sig-row > td { background: #fafbfc; padding: 10px 12px; }
+      .sig-head { font-size: 0.85em; color: #555; margin-bottom: 8px; }
+      .sig-key-ref { color: #555; font-weight: 600; }
+      .sig-key-omjl { color: #0366d6; font-weight: 600; }
+      .sig-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+      .sig-card { border: 1px solid #ddd; border-radius: 4px; background: #fff; padding: 6px 8px; width: 376px; }
+      .sig-card.sig-fail { border-color: #e4a3a8; }
+      .sig-title { font-family: monospace; font-size: 0.85em; word-break: break-all; }
+      .sig-title a { color: #333; text-decoration: none; }
+      .sig-title a:hover { text-decoration: underline; }
+      .sig-mark-ok { color: #155724; }
+      .sig-mark-fail { color: #b31d28; font-weight: 600; }
+      .sig-stats, .sig-readout { font-size: 0.75em; color: #666; font-family: monospace; min-height: 1.3em; }
+      .sig-plot { display: block; max-width: 100%; height: auto; }
+      .sig-plot .frame { fill: none; stroke: #ddd; }
+      .sig-plot .band { fill: #e6e6e6; }
+      .sig-plot .ref { fill: none; stroke: #555; stroke-width: 1.5; }
+      .sig-plot .omjl { fill: none; stroke: #0366d6; stroke-width: 1.5; stroke-dasharray: 5 3; }
+      .sig-plot .worst { fill: none; stroke: #b31d28; stroke-width: 2; }
+      .sig-plot .worst-line { stroke: #b31d28; stroke-width: 1; stroke-dasharray: 3 2; }
+      .sig-plot .cursor { stroke: #999; stroke-dasharray: 2 2; }
+      .sig-plot text { font-size: 10px; fill: #666; font-family: monospace; }
+      #error-modal-text.values { color: #333; }
+
+</style>
+</head>
+<body>
+<h1>BusinessSimulation 2.2.0 - OM.jl Pipeline Test Results</h1>
+<div class="meta">
+  Generated: 2026-11-27 23:03:49 | 13 models (0 known broken)
+</div>
+<div class="changelog"><strong>Changes:</strong> Run tag: ci. Library: BusinessSimulation 2.2.0. Merged from 1 shards.</div>
+
+<table class="summary-table">
+<tr><th>Stage</th><th>Passed</th><th>Total</th><th>Rate</th></tr>
+<tr><td>Frontend</td><td>12</td><td>13</td><td>92.3%</td></tr>
+<tr><td>Backend</td><td>11</td><td>13</td><td>84.6%</td></tr>
+<tr><td>Simulate</td><td>11</td><td>13</td><td>84.6%</td></tr>
+<tr><td>Validate</td><td>0</td><td>13</td><td>0.0%</td></tr>
+</table>
+
+<table class="results">
+<thead>
+<tr>
+  <th>Model</th>
+  <th>Frontend</th>
+  <th>Backend</th>
+  <th>Simulate</th>
+  <th>Validate</th>
+  <th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.AssemblyLine</td>
+  <td class="ok">&#10003; 4.6s</td>
+  <td class="ok">&#10003; 2.9s</td>
+  <td class="ok">&#10003; 2.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">10.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.HealTheWorld</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 3.6s</td>
+  <td class="ok">&#10003; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">3.9s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.LookupFunctions</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.6s</td>
+  <td class="ok">&#10003; 0.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.6s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.LotkaVolterraEquationsRevisited</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.3s</td>
+  <td class="ok">&#10003; 1.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.7s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.LotkaVolterraSystems</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.2s</td>
+  <td class="ok">&#10003; 1.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.8s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.LoveHateDynamics</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 1.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.ManagingEmployment</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: BusinessSimulation_Examples_ManagingEmployment: array preserving codegen not supported (array code after index reduction: 271 equations for 270 unknowns (and 0 assigned by algorithms): no unknown left for hiring|gainingExperience.growing.useB_rate[1] = not hiring|gainingExperience.growing.portB.stopInflow[1]; with it 4 equations share 3 unknowns: hiring|gainingExperience.growing.portB.stopInflow[$c] = hiring|gainingExperience; hiring|gainingExperience.mass..." onclick="showError(this)">&#10007; 23.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">23.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.SIR</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 0.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.SimpleProductionChain</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.8s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.9s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.SimpleProductionChainII</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 0.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.0s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.SimpleProductionChainIII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 1.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Examples.SoftwareReleaseProject</td>
+  <td class="ok">&#10003; 0.5s</td>
+  <td class="ok">&#10003; 7.3s</td>
+  <td class="ok">&#10003; 13.7s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">21.6s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Converters.DiscreteDelay.DelayInformation</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">BusinessSimulation.Converters.DiscreteDelay.DelayInformation</td>
+  <td class="fail" data-error="MetaModelicaGeneralException(&quot;Runtime defined generic Meta Modelica failure&quot;)" onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+
+</tbody>
+</table>
+<div id="error-modal">
+  <div id="error-modal-box">
+    <button id="error-modal-close" onclick="closeError()" title="Close">&times;</button>
+    <strong id="error-modal-title">Error detail</strong>
+    <pre id="error-modal-text"></pre>
+  </div>
+</div>
+<script>
+  function showError(td) {
+    var msg = td.getAttribute('data-error');
+    if (!msg) return;
+    document.getElementById('error-modal-title').textContent = 'Error detail';
+    document.getElementById('error-modal-text').className = '';
+    document.getElementById('error-modal-text').textContent = msg;
+    document.getElementById('error-modal').classList.add('open');
+  }
+  function closeError() {
+    document.getElementById('error-modal').classList.remove('open');
+  }
+  document.getElementById('error-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeError();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeError();
+  });
+</script>
+<script>
+var SIGNALS = null, SIGNALS_LOADING = null, SVGNS = 'http://www.w3.org/2000/svg';
+function signalFiles() {
+  var page = location.pathname.split('/').pop() || 'report.html';
+  return [page.replace(/\.html?$/, '') + '.signals.json', 'signals.json'];
+}
+function loadSignals() {
+  if (SIGNALS) return Promise.resolve(SIGNALS);
+  if (SIGNALS_LOADING) return SIGNALS_LOADING;
+  SIGNALS_LOADING = signalFiles().reduce(function(p, f) {
+    return p.catch(function() {
+      return fetch(f).then(function(r) { if (!r.ok) throw new Error(f + ': ' + r.status); return r.json(); });
+    });
+  }, Promise.reject(new Error('none'))).then(function(d) { SIGNALS = d.models; return SIGNALS; });
+  SIGNALS_LOADING.catch(function() { SIGNALS_LOADING = null; });
+  return SIGNALS_LOADING;
+}
+function toggleSignals(a) {
+  var tr = a.closest('tr'), next = tr.nextElementSibling;
+  if (next && next.classList.contains('sig-row')) { next.remove(); return false; }
+  var row = document.createElement('tr'), td = document.createElement('td');
+  row.className = 'sig-row'; td.colSpan = 6; row.appendChild(td);
+  tr.parentNode.insertBefore(row, tr.nextSibling);
+  td.textContent = 'Loading the signals...';
+  var model = a.getAttribute('data-model');
+  loadSignals().then(function(models) { showModel(td, models, model); },
+                     function() { askForFile(td, model); });
+  return false;
+}
+function showModel(td, models, model) {
+  if (models[model]) renderSignals(td, models[model]);
+  else td.textContent = 'The signals file has no signals of ' + model + '.';
+}
+function askForFile(td, model) {
+  td.textContent = '';
+  var p = document.createElement('p');
+  p.textContent = 'The signals could not be read. The coverage site keeps them (signals.json) for the latest 5 runs ' +
+    'of a version; a report opened from disk cannot read the .signals.json beside it: choose that file here. ';
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    input.files[0].text().then(function(t) { SIGNALS = JSON.parse(t).models; showModel(td, SIGNALS, model); });
+  };
+  p.appendChild(input); td.appendChild(p);
+}
+function fmt(x) {
+  if (x === null || x === undefined) return '—';
+  var a = Math.abs(x);
+  return (a !== 0 && (a >= 1e5 || a < 1e-3)) ? x.toExponential(3) : String(Number(x.toPrecision(6)));
+}
+function fmtAxis(x) {
+  var a = Math.abs(x);
+  return (a !== 0 && (a >= 1e5 || a < 1e-3)) ? x.toExponential(2) : String(Number(x.toPrecision(4)));
+}
+function sampleTimes(s, m) {
+  var T = s.time || m.time, n = T[2], t = [];
+  for (var i = 0; i < n; i++) t.push(n > 1 ? T[0] + i * (T[1] - T[0]) / (n - 1) : T[0]);
+  return t;
+}
+function renderSignals(td, m) {
+  td.textContent = '';
+  var sigs = m.signals.slice().sort(function(x, y) { return x.passed - y.passed; });   // failed first
+  var failed = sigs.filter(function(s) { return !s.passed; }).length;
+  var head = document.createElement('div');
+  head.className = 'sig-head';
+  var banded = sigs.some(function(s) { return s.low; });   // OpenModelica's comparison (older files: atol/reltol)
+  head.innerHTML = '<span class="sig-key-ref">— reference</span> &nbsp; <span class="sig-key-omjl">- - OM.jl</span> &nbsp; ' +
+    (banded ? 'grey: the band OM.jl must stay in, as OpenModelica\'s library testing compares (0.1 % of the time span wide ' +
+              'in time, 0.3 % of the value and of the signal\'s range high); checked at every time of the reference except ' +
+              'its events; red: where OM.jl is furthest outside it' :
+              'grey: the tolerance around the reference (atol ' + fmt(m.atol) + ', reltol ' + fmt(m.reltol) + ')') +
+    '; values with 6 significant digits. ';
+  head.appendChild(document.createTextNode(sigs.length + ' signals compared, ' + failed + ' failed' +
+    (m.validated ? '.' : '; the model did not validate.') + ' Point at a plot to read its values; click a name for all of them.'));
+  td.appendChild(head);
+  var grid = document.createElement('div');
+  grid.className = 'sig-grid';
+  sigs.forEach(function(s) { grid.appendChild(signalCard(s, m)); });
+  td.appendChild(grid);
+}
+function signalCard(s, m) {
+  var card = document.createElement('div'), title = document.createElement('div'), name = document.createElement('a');
+  var mark = document.createElement('span'), stats = document.createElement('div'), readout = document.createElement('div');
+  card.className = 'sig-card ' + (s.passed ? 'sig-pass' : 'sig-fail');
+  title.className = 'sig-title';
+  name.href = '#'; name.textContent = s.name; name.title = 'All compared values';
+  name.onclick = function() { showValues(s, m); return false; };
+  mark.className = s.passed ? 'sig-mark-ok' : 'sig-mark-fail';
+  mark.textContent = s.passed ? ' ✓' : (s.low ? ' ✗ outside the band' : ' ✗ outside the tolerance');
+  title.appendChild(name); title.appendChild(mark);
+  stats.className = 'sig-stats';
+  stats.textContent = signalStats(s);
+  readout.className = 'sig-readout';
+  card.appendChild(title); card.appendChild(stats); card.appendChild(signalPlot(s, m, readout)); card.appendChild(readout);
+  return card;
+}
+function signalStats(s) {
+  if (s.max_abs_err === null) return 'not compared: no OM.jl value';
+  var text = 'max |error| ' + fmt(s.max_abs_err) + ' (relative ' + fmt(s.max_rel_err) + ')';
+  if (s.compared === undefined) {   // older files: where the largest error is (0 when none)
+    if (s.worst_time !== null && s.worst_time !== undefined) text += ' at t = ' + fmt(s.worst_time);
+    return text;
+  }
+  return text + (s.outside ?
+    '; outside the band at ' + s.outside + ' of ' + s.compared + ' times, furthest at t = ' + fmt(s.worst_time) +
+      ' (OM.jl ' + fmt(s.worst_omjl) + ', reference ' + fmt(s.worst_reference) + ')' :
+    '; in the band at all ' + (s.compared - (s.events || 0)) + ' compared times' +
+      (s.events ? ' (' + s.events + ' at events, not compared)' : ''));
+}
+function svgEl(name, attrs) {
+  var e = document.createElementNS(SVGNS, name);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function svgText(svg, x, y, s, anchor) {
+  var t = svgEl('text', {x: x, y: y, 'text-anchor': anchor});
+  t.textContent = s; svg.appendChild(t);
+}
+function svgLine(svg, t, v, X, Y, cls) {   // one polyline per run of values (none where null)
+  var pts = [];
+  function flush() { if (pts.length) svg.appendChild(svgEl('polyline', {points: pts.join(' '), 'class': cls})); pts = []; }
+  for (var i = 0; i < t.length; i++) { if (v[i] === null) flush(); else pts.push(X(t[i]) + ',' + Y(v[i])); }
+  flush();
+}
+function signalPlot(s, m, readout) {
+  var W = 360, H = 160, L = 62, R = 8, T = 8, B = 20;
+  var t = sampleTimes(s, m), ref = s.reference, om = s.omjl, n = t.length, i;
+  var tol = ref.map(function(v) { return v === null ? null : m.atol + m.reltol * Math.abs(v); });
+  var high = s.high || ref.map(function(v, k) { return v === null ? null : v + tol[k]; });   // older files: atol/reltol
+  var low = s.low || ref.map(function(v, k) { return v === null ? null : v - tol[k]; });
+  var ys = [];
+  for (i = 0; i < n; i++) {
+    if (high[i] !== null && low[i] !== null) ys.push(high[i], low[i]);
+    if (om[i] !== null) ys.push(om[i]);
+  }
+  var worstOmjl = !s.passed && s.worst_omjl !== undefined && s.worst_omjl !== null;   // where it is, between samples too
+  if (worstOmjl) ys.push(s.worst_omjl);
+  var y0 = ys.length ? Math.min.apply(null, ys) : 0, y1 = ys.length ? Math.max.apply(null, ys) : 1;
+  if (y1 - y0 <= 1e-12 * Math.max(1, Math.abs(y1))) { var c = y0, d = 1e-6 * Math.max(1, Math.abs(c)); y0 = c - d; y1 = c + d; }
+  var pad = 0.05 * (y1 - y0); y0 -= pad; y1 += pad;
+  var t0 = t[0], t1 = t[n - 1] > t0 ? t[n - 1] : t0 + 1;
+  function X(x) { return L + (x - t0) / (t1 - t0) * (W - L - R); }
+  function Y(y) { return T + (y1 - y) / (y1 - y0) * (H - T - B); }
+  var svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'sig-plot'});
+  svg.appendChild(svgEl('rect', {x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'frame'}));
+  var up = [], lo = [];
+  for (i = 0; i < n; i++) if (high[i] !== null && low[i] !== null) { up.push(X(t[i]) + ',' + Y(high[i])); lo.unshift(X(t[i]) + ',' + Y(low[i])); }
+  if (up.length) svg.appendChild(svgEl('polygon', {points: up.concat(lo).join(' '), 'class': 'band'}));
+  svgLine(svg, t, ref, X, Y, 'ref');
+  svgLine(svg, t, om, X, Y, 'omjl');
+  if (worstOmjl && s.worst_time !== null) {
+    svg.appendChild(svgEl('line', {x1: X(s.worst_time), x2: X(s.worst_time), y1: T, y2: H - B, 'class': 'worst-line'}));
+    svg.appendChild(svgEl('circle', {cx: X(s.worst_time), cy: Y(s.worst_omjl), r: 4, 'class': 'worst'}));
+  } else if (!s.passed && s.worst_time !== null && s.worst_time !== undefined) {   // older files: the nearest sample
+    var w = Math.round((s.worst_time - t0) / (t1 - t0) * (n - 1));
+    w = Math.max(0, Math.min(n - 1, w));
+    if (om[w] !== null) svg.appendChild(svgEl('circle', {cx: X(t[w]), cy: Y(om[w]), r: 4, 'class': 'worst'}));
+  }
+  svgText(svg, L - 4, T + 9, fmtAxis(y1 - pad), 'end');
+  svgText(svg, L - 4, H - B, fmtAxis(y0 + pad), 'end');
+  svgText(svg, L, H - 5, fmtAxis(t[0]), 'start');
+  svgText(svg, W - R, H - 5, 't = ' + fmtAxis(t[n - 1]), 'end');
+  var cursor = svgEl('line', {y1: T, y2: H - B, 'class': 'cursor', visibility: 'hidden'});
+  svg.appendChild(cursor);
+  var hit = svgEl('rect', {x: L, y: T, width: W - L - R, height: H - T - B, fill: 'transparent'});
+  hit.addEventListener('mousemove', function(ev) {
+    var box = svg.getBoundingClientRect(), x = (ev.clientX - box.left) * W / box.width;
+    var k = Math.max(0, Math.min(n - 1, Math.round((x - L) / (W - L - R) * (n - 1))));
+    cursor.setAttribute('x1', X(t[k])); cursor.setAttribute('x2', X(t[k])); cursor.setAttribute('visibility', 'visible');
+    readout.textContent = 't = ' + fmt(t[k]) + '  reference ' + fmt(ref[k]) + '  OM.jl ' + fmt(om[k]) +
+      (ref[k] !== null && om[k] !== null ? '  |diff| ' + fmt(Math.abs(om[k] - ref[k])) : '');
+  });
+  hit.addEventListener('mouseleave', function() { cursor.setAttribute('visibility', 'hidden'); readout.textContent = ''; });
+  svg.appendChild(hit);
+  return svg;
+}
+function showValues(s, m) {
+  var t = sampleTimes(s, m), lines = [];
+  function pad(text) { return (text + '                ').slice(0, 16); }
+  lines.push(pad('t') + pad('reference') + pad('OM.jl') + pad('|diff|') + (s.low ? pad('band low') + 'band high' : ''));
+  for (var i = 0; i < t.length; i++) {
+    var r = s.reference[i], o = s.omjl[i];
+    lines.push(pad(fmt(t[i])) + pad(fmt(r)) + pad(fmt(o)) + (r !== null && o !== null ? pad(fmt(Math.abs(o - r))) : pad('—')) +
+               (s.low ? pad(fmt(s.low[i])) + fmt(s.high[i]) : ''));
+  }
+  document.getElementById('error-modal-title').textContent = s.name + ': the compared values';
+  var pre = document.getElementById('error-modal-text');
+  pre.className = 'values'; pre.textContent = lines.join('\n');
+  document.getElementById('error-modal').classList.add('open');
+}
+
+</script>
+</body>
+</html>
