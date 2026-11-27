@@ -1,7 +1,8 @@
 name: Library coverage
 
 # The coverage of another Modelica library's experiment models through OM.jl (flatten, translate,
-# simulate; there are no reference results to validate against), for JKRT's fork of
+# simulate; validate for a library with reference results, REFERENCE_LIBRARIES in src/registry.jl:
+# ModelicaTest, whose shards fetch their models' MAP-LIB results, download_references), for JKRT's fork of
 # OMLibraryTesting.jl only: OpenModelica/OMLibraryTesting.jl runs the MSL coverage on a schedule
 # (coverage.yml), this workflow runs on manual dispatch only and does nothing in another repository.
 #
