@@ -1,0 +1,292 @@
+name: Library coverage
+
+# The coverage of another Modelica library's experiment models through OM.jl (flatten, translate,
+# simulate; there are no reference results to validate against), for JKRT's fork of
+# OMLibraryTesting.jl only: OpenModelica/OMLibraryTesting.jl runs the MSL coverage on a schedule
+# (coverage.yml), this workflow runs on manual dispatch only and does nothing in another repository.
+#
+# One run measures one library: Actions > Library coverage > Run workflow, or
+#   gh workflow run library-coverage.yml --repo JKRT/OMLibraryTesting.jl -f library=Buildings@13.0.0
+# Every library of the list:
+#   for l in $(sed -n 's/^ *- "\(.*@.*\)"$/\1/p' .github/workflows/library-coverage.yml); do
+#     gh workflow run library-coverage.yml --repo JKRT/OMLibraryTesting.jl -f library="$l"; done
+#
+# The library and the libraries it uses come from OpenModelica's package index
+# (scripts/install_library.py), MSL 4.1.0 from the MSL repository (coverage-setup); OMFrontend
+# bundles 3.2.3 for a library that uses MSL 3. The experiment models are the list omc 1.27.1
+# records (models/experiments_<Name>_<version>.txt, record_experiments(); add a library to the
+# list below with its file). The models are split over shards of about 100 models each (at most
+# 20 jobs), each within the 6-hour job limit; the publish job merges them (merge_coverage.jl).
+#
+# The run goes to the fork's coverage site (gh-pages; Pages serves it), dated, in the library's
+# folder lib-<Name>-<version>/ (library_site_folder); every page's navigation lists the MSL
+# versions and the libraries run so far. Before adding a run the publish job copies the MSL pages
+# of OpenModelica/OMLibraryTesting.jl's gh-pages in, so the site shows the current MSL coverage
+# beside the libraries. No README badge and no commit to the branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      library:
+        description: Library (Name@version)
+        type: choice
+        options:
+          - "Buildings@13.0.0"
+          - "ThermofluidStream@1.4.0"
+          - "ScalableTestSuite@2.3.0"
+          - "SystemDynamics@2.1.2"
+          - "BusinessSimulation@2.2.0"
+          - "PNlib@3.0.0"
+          - "Pharmacolibrary@25.9.0"
+          - "PhotoVoltaics@2.1.0"
+          - "PlanarMechanics@1.7.0"
+          - "VehicleInterfaces@2.0.2"
+          - "HanserModelica@2.0.1"
+          - "DeltaRobot@1.0.2"
+          - "StewartPlatform@1.0.2"
+          - "ModelicaTest@4.1.0+maint.om"
+          - "PowerGrids@1.0.3"
+          - "OpenIPSL@3.1.0"
+          - "Chemical@2.0.0"
+          - "Physiolibrary@3.0.0"
+          - "PowerSystems@2.0.0"
+          - "ModelicaByExample@0.6.0"
+      shards:
+        description: Shard jobs (empty for one per 100 models, at most 20)
+        required: false
+        default: ""
+      line:
+        description: OM.jl line to measure (empty for the branch the workflow runs on)
+        required: false
+        default: ""
+      julia:
+        description: Julia version
+        required: false
+        default: "1.13"
+      workers:
+        description: Worker processes per shard
+        required: false
+        default: "1"
+      timeout:
+        description: Seconds per model
+        required: false
+        default: "600"
+      publish:
+        description: Add the run to the coverage site
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write  # the gh-pages commit
+  actions: write   # julia-actions/cache deletes the caches it replaces
+
+concurrency:
+  group: library-coverage-${{ inputs.library }}
+  cancel-in-progress: false
+
+env:
+  OMJL_COVERAGE_LIBRARY: ${{ inputs.library }}
+
+jobs:
+  # The shards: one per 100 experiment models of the library, at most 20, unless `shards` is given.
+  plan:
+    name: ${{ inputs.library }}, plan
+    if: github.repository == 'JKRT/OMLibraryTesting.jl'
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      n: ${{ steps.plan.outputs.n }}
+      artifact: ${{ steps.plan.outputs.artifact }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        env:
+          SHARDS: ${{ inputs.shards }}
+        run: |
+          list="models/experiments_${OMJL_COVERAGE_LIBRARY%@*}_${OMJL_COVERAGE_LIBRARY#*@}.txt"
+          [ -f "$list" ] || { echo "::error::No experiment list $list (record_experiments)"; exit 1; }
+          models=$(grep -c . "$list")
+          n=${SHARDS:-$(( (models + 99) / 100 ))}
+          [ "$n" -ge 1 ] && [ "$n" -le 20 ] || n=$(( n < 1 ? 1 : 20 ))
+          echo "$OMJL_COVERAGE_LIBRARY: $models models, $n shards" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "n=$n" >> "$GITHUB_OUTPUT"
+          echo "shards=[$(seq -s, 1 "$n")]" >> "$GITHUB_OUTPUT"
+          echo "artifact=library-coverage-$(echo "$OMJL_COVERAGE_LIBRARY" | tr -c 'A-Za-z0-9._-\n' '_')" >> "$GITHUB_OUTPUT"
+
+  coverage:
+    name: ${{ inputs.library }} coverage, shard ${{ matrix.shard }}/${{ needs.plan.outputs.n }}
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    env:
+      JULIA_PKG_PRECOMPILE_AUTO: "0"
+    steps:
+      - name: Check out OM.jl
+        uses: JKRT/OM.jl/.github/actions/checkout-siblings@master
+        with:
+          packages: OM
+          path: .
+          line: ${{ inputs.line }}
+
+      - name: Check out OMLibraryTesting
+        uses: actions/checkout@v4
+        with:
+          path: OM.jl/OMLibraryTesting.jl
+
+      - name: Set up
+        uses: ./OM.jl/OMLibraryTesting.jl/.github/actions/coverage-setup
+        with:
+          line: ${{ inputs.line }}
+          julia: ${{ inputs.julia || '1.13' }}
+          msl: "4.1.0"
+
+      - name: Install ${{ inputs.library }}
+        run: python3 OM.jl/OMLibraryTesting.jl/scripts/install_library.py "${OMJL_COVERAGE_LIBRARY%@*}" "${OMJL_COVERAGE_LIBRARY#*@}"
+
+      - name: Commits measured
+        run: |
+          for d in OM.jl OM.jl/*.jl; do
+            if [ -d "$d/.git" ]; then echo "$(basename "$d") $(git -C "$d" rev-parse --short HEAD)"; fi
+          done | tee commits.txt
+
+      - name: Coverage
+        working-directory: OM.jl/OMLibraryTesting.jl
+        env:
+          OMJL_COVERAGE_TAG: ci
+          OMJL_COVERAGE_NOSKIP: "1"
+          OMJL_COVERAGE_SHARD: ${{ matrix.shard }}/${{ needs.plan.outputs.n }}
+          OMJL_COVERAGE_WORKERS: ${{ inputs.workers || '1' }}
+          OMJL_COVERAGE_TIMEOUT: ${{ inputs.timeout || '600' }}
+          JULIA_NUM_THREADS: "1"
+        # The memory limit per worker as coverage.yml: past the runner's 16 GB the shard's results are lost.
+        run: |
+          export OMJL_COVERAGE_MEMORY_LIMIT_GB=$(awk -v w="$OMJL_COVERAGE_WORKERS" 'BEGIN { printf "%.1f", 11 / w }')
+          julia --color=yes --project=. scripts/run_full_coverage.jl
+
+      - name: Upload the shard's results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.plan.outputs.artifact }}-shard-${{ matrix.shard }}
+          path: |
+            commits.txt
+            OM.jl/OMLibraryTesting.jl/reports/
+            OM.jl/OMLibraryTesting.jl/logs/partial_ci_*.jls
+          if-no-files-found: error
+
+  # The shards' results as one run: the reports and the site.
+  publish:
+    name: ${{ inputs.library }} coverage, publish
+    needs: [plan, coverage]
+    if: ${{ !cancelled() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      JULIA_PKG_PRECOMPILE_AUTO: "0"
+      OMJL_COVERAGE_TAG: ci
+      NOTE: >-
+        No-skip run on GitHub Actions (ubuntu-latest, Julia ${{ inputs.julia || '1.13' }}),
+        ${{ needs.plan.outputs.n }} shards of ${{ inputs.workers || '1' }} workers, ${{ inputs.timeout || '600' }} s per model
+    steps:
+      - name: Check out OM.jl
+        uses: JKRT/OM.jl/.github/actions/checkout-siblings@master
+        with:
+          packages: OM
+          path: .
+          line: ${{ inputs.line }}
+
+      - name: Check out OMLibraryTesting
+        uses: actions/checkout@v4
+        with:
+          path: OM.jl/OMLibraryTesting.jl
+
+      - name: Set up
+        uses: ./OM.jl/OMLibraryTesting.jl/.github/actions/coverage-setup
+        with:
+          line: ${{ inputs.line }}
+          julia: ${{ inputs.julia || '1.13' }}
+
+      - name: Download the shards' results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ needs.plan.outputs.artifact }}-shard-*
+          path: ${{ runner.temp }}/shards
+
+      # All shards measured the same commits (checked out at their start).
+      - name: Commits measured
+        run: |
+          shards="$RUNNER_TEMP/shards"
+          first=$(ls "$shards"/*/commits.txt | head -1)
+          for f in "$shards"/*/commits.txt; do
+            cmp -s "$f" "$first" || { echo "::error::The shards measured different commits"; diff "$first" "$f"; exit 1; }
+          done
+          cp "$first" commits.txt
+          cat commits.txt
+
+      - name: Merge the shards
+        working-directory: OM.jl/OMLibraryTesting.jl
+        run: julia --color=yes --project=. scripts/merge_coverage.jl "$RUNNER_TEMP"/shards/*/OM.jl/OMLibraryTesting.jl/logs/partial_ci_*.jls
+
+      - name: The run's analysis
+        id: analysis
+        working-directory: OM.jl/OMLibraryTesting.jl
+        run: |
+          results=$(ls -t logs/partial_ci_*.jls | head -1)
+          julia --color=yes --project=. scripts/publish_coverage.jl "$results" "$GITHUB_WORKSPACE/commits.txt" "$NOTE"
+          doc="docs/COVERAGE_${OMJL_COVERAGE_LIBRARY%@*}_${OMJL_COVERAGE_LIBRARY#*@}.md"
+          echo "COVERAGE_MD=$doc" >> "$GITHUB_ENV"
+          cat "$doc" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.plan.outputs.artifact }}
+          path: |
+            commits.txt
+            OM.jl/OMLibraryTesting.jl/reports/
+            OM.jl/OMLibraryTesting.jl/logs/partial_ci_*.jls
+            OM.jl/OMLibraryTesting.jl/${{ env.COVERAGE_MD }}
+          if-no-files-found: warn
+
+      # The fork's gh-pages: the MSL pages as OpenModelica/OMLibraryTesting.jl has them now, the
+      # library folders of earlier runs, this run. Other library runs may push meanwhile: on a
+      # rejected push the site is built again on the new head (at most 5 times).
+      - name: Publish the coverage site
+        if: steps.analysis.outcome == 'success' && inputs.publish
+        working-directory: OM.jl/OMLibraryTesting.jl
+        run: |
+          export OMJL_SITE_URL="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}/"
+          results=$(ls -t logs/partial_ci_*.jls | head -1)
+          report=$(ls -t reports/coverage_ci_*.html | head -1)
+          site="$RUNNER_TEMP/site"
+          msl="$RUNNER_TEMP/msl-site"
+          git clone -q --depth 1 --branch gh-pages https://github.com/OpenModelica/OMLibraryTesting.jl.git "$msl"
+          for attempt in 1 2 3 4 5; do
+            git worktree remove --force "$site" 2>/dev/null || true
+            if git fetch -q --depth=1 origin gh-pages; then
+              git worktree add -q -B gh-pages "$site" FETCH_HEAD
+            else
+              git worktree add -q --orphan -b gh-pages "$site"
+            fi
+            # The MSL pages: everything of the MSL site but its git data; the lib-* folders stay the fork's.
+            find "$site" -mindepth 1 -maxdepth 1 ! -name .git ! -name 'lib-*' -exec rm -rf {} +
+            (cd "$msl" && find . -mindepth 1 -maxdepth 1 ! -name .git ! -name 'lib-*' -exec cp -r {} "$site"/ \;)
+            julia --color=yes --project=. scripts/publish_site.jl "$site" "$results" "$report" "$COVERAGE_MD" "$GITHUB_WORKSPACE/commits.txt" "$NOTE"
+            (
+              cd "$site"
+              git add -A
+              git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit -q -m "Coverage of $(date -u +%Y-%m-%d), $OMJL_COVERAGE_LIBRARY"
+              git push -q origin gh-pages
+            ) && break
+            [ "$attempt" = 5 ] && { echo "::error::gh-pages push rejected 5 times"; exit 1; }
+            sleep $(( attempt * 10 ))
+          done
+          folder=$(julia --project=. -e 'import OMLibraryTesting; print(OMLibraryTesting.coverage_target_from_env().folder)')
+          echo "Coverage site: $OMJL_SITE_URL$folder/" >> "$GITHUB_STEP_SUMMARY"
