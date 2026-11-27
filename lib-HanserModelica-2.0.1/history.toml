@@ -1,0 +1,12 @@
+badge = "simulate"
+library = "HanserModelica 2.0.1"
+
+[[runs]]
+backend = 59
+commits = ["OM.jl 898bf35", "ImmutableList.jl e4e35af", "MetaModelica.jl 76ec6cf", "OMBackend.jl d6cb8fc", "OMFrontend.jl 213ff2b", "OMLibraryTesting.jl ad2f55d", "OMRuntimeExternalC.jl 65c6b0a", "OpenModelicaParser.jl 71cf3ae"]
+date = "2026-11-27"
+frontend = 60
+models = 60
+note = "No-skip run on GitHub Actions (ubuntu-latest, Julia 1.13), 1 shards of 1 workers, 600 s per model"
+simulate = 59
+validate = 0
