@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OpenIPSL 3.1.0 - OM.jl Pipeline Test Results</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         margin: 2em; background: #fff; color: #333; }
+  h1 { margin-bottom: 0.2em; }
+  .meta { color: #666; font-size: 0.9em; margin-bottom: 0.5em; }
+  .meta code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+  .changelog { color: #555; font-size: 0.9em; margin-bottom: 1.5em; }
+  .summary-table { border-collapse: collapse; margin-bottom: 2em; }
+  .summary-table th, .summary-table td { border: 1px solid #ccc; padding: 6px 16px; text-align: right; }
+  .summary-table th { background: #f5f5f5; text-align: left; }
+  .summary-table td:last-child { font-weight: bold; }
+  table.results { border-collapse: collapse; width: 100%; }
+  table.results th { border: 1px solid #ccc; padding: 4px 10px; background: #f5f5f5;
+                     text-align: left; font-size: 0.85em; text-transform: uppercase; }
+  table.results td { border: 1px solid #ccc; padding: 4px 10px; font-size: 0.9em; }
+  .model-name { font-family: monospace; font-size: 0.85em; }
+  .ok { background: #d4edda; color: #155724; text-align: center; }
+  .fail { background: #f8d7da; color: #721c24; text-align: center; cursor: pointer; }
+  .fail[data-error]:hover { text-decoration: underline dotted; }
+  #error-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+                 z-index: 1000; align-items: center; justify-content: center; }
+  #error-modal.open { display: flex; }
+  #error-modal-box { background: #fff; border-radius: 6px; padding: 1.5em 2em;
+                     max-width: 70vw; max-height: 80vh; overflow-y: auto;
+                     box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative; }
+  #error-modal-close { position: absolute; top: 0.6em; right: 0.8em;
+                       font-size: 1.3em; cursor: pointer; color: #555; border: none;
+                       background: none; }
+  #error-modal-close:hover { color: #000; }
+  #error-modal-text { font-family: monospace; font-size: 0.85em; white-space: pre-wrap;
+                      color: #721c24; margin-top: 0.5em; }
+  .na { color: #888; text-align: center; }
+  .time { text-align: right; color: #666; font-family: monospace; }
+  .broken-row { opacity: 0.5; }
+  .broken-row td { font-style: italic; }
+  .domain-header td { background: #e9ecef; font-size: 0.85em; padding: 6px 10px; }
+      .sig-link { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                  font-size: 0.85em; margin-left: 0.6em; color: #0366d6; text-decoration: none; white-space: nowrap; }
+      .sig-link:hover { text-decoration: underline; }
+      .sig-link.sig-has-fail { color: #b31d28; font-weight: 600; }
+      .sig-row > td { background: #fafbfc; padding: 10px 12px; }
+      .sig-head { font-size: 0.85em; color: #555; margin-bottom: 8px; }
+      .sig-key-ref { color: #555; font-weight: 600; }
+      .sig-key-omjl { color: #0366d6; font-weight: 600; }
+      .sig-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+      .sig-card { border: 1px solid #ddd; border-radius: 4px; background: #fff; padding: 6px 8px; width: 376px; }
+      .sig-card.sig-fail { border-color: #e4a3a8; }
+      .sig-title { font-family: monospace; font-size: 0.85em; word-break: break-all; }
+      .sig-title a { color: #333; text-decoration: none; }
+      .sig-title a:hover { text-decoration: underline; }
+      .sig-mark-ok { color: #155724; }
+      .sig-mark-fail { color: #b31d28; font-weight: 600; }
+      .sig-stats, .sig-readout { font-size: 0.75em; color: #666; font-family: monospace; min-height: 1.3em; }
+      .sig-plot { display: block; max-width: 100%; height: auto; }
+      .sig-plot .frame { fill: none; stroke: #ddd; }
+      .sig-plot .band { fill: #e6e6e6; }
+      .sig-plot .ref { fill: none; stroke: #555; stroke-width: 1.5; }
+      .sig-plot .omjl { fill: none; stroke: #0366d6; stroke-width: 1.5; stroke-dasharray: 5 3; }
+      .sig-plot .worst { fill: none; stroke: #b31d28; stroke-width: 2; }
+      .sig-plot .worst-line { stroke: #b31d28; stroke-width: 1; stroke-dasharray: 3 2; }
+      .sig-plot .cursor { stroke: #999; stroke-dasharray: 2 2; }
+      .sig-plot text { font-size: 10px; fill: #666; font-family: monospace; }
+      #error-modal-text.values { color: #333; }
+
+</style>
+</head>
+<body>
+<h1>OpenIPSL 3.1.0 - OM.jl Pipeline Test Results</h1>
+<div class="meta">
+  Generated: 2026-11-27 23:05:06 | 182 models (0 known broken)
+</div>
+<div class="changelog"><strong>Changes:</strong> Run tag: ci. Library: OpenIPSL 3.1.0. Merged from 2 shards.</div>
+
+<table class="summary-table">
+<tr><th>Stage</th><th>Passed</th><th>Total</th><th>Rate</th></tr>
+<tr><td>Frontend</td><td>176</td><td>182</td><td>96.7%</td></tr>
+<tr><td>Backend</td><td>4</td><td>182</td><td>2.2%</td></tr>
+<tr><td>Simulate</td><td>3</td><td>182</td><td>1.6%</td></tr>
+<tr><td>Validate</td><td>0</td><td>182</td><td>0.0%</td></tr>
+</table>
+
+<table class="results">
+<thead>
+<tr>
+  <th>Model</th>
+  <th>Frontend</th>
+  <th>Backend</th>
+  <th>Simulate</th>
+  <th>Validate</th>
+  <th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.AKD.System.AKD</td>
+  <td class="fail" data-error="MetaModelicaGeneralException(&quot;Runtime defined generic Meta Modelica failure&quot;)" onclick="showError(this)">&#10007; 4.6s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">4.6s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.N44_Base_Case_Systems.Nordic44_Base_Case_StateEvents</td>
+  <td class="ok">&#10003; 7.4s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_N44_Base_Case_Systems_Nordic44_Base_Case_StateEvents: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Complex..." onclick="showError(this)">&#10007; 14.6s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">21.9s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.N44_Base_Case_Systems.Nordic44_Base_Case_StateEvents2</td>
+  <td class="ok">&#10003; 3.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_N44_Base_Case_Systems_Nordic44_Base_Case_StateEvents2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Comple..." onclick="showError(this)">&#10007; 14.6s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">17.8s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.N44_Base_Case_Systems.Nordic44_Base_Case_StateEvents3</td>
+  <td class="ok">&#10003; 2.3s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_N44_Base_Case_Systems_Nordic44_Base_Case_StateEvents3: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Comple..." onclick="showError(this)">&#10007; 12.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">15.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.N44_Original_Systems.Nordic44_Original_Case_Bus_Fault</td>
+  <td class="ok">&#10003; 2.6s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_N44_Original_Systems_Nordic44_Original_Case_Bus_Fault: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Comple..." onclick="showError(this)">&#10007; 12.6s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">15.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.N44_Original_Systems.Nordic44_Original_Case_Line_Opening</td>
+  <td class="ok">&#10003; 2.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_N44_Original_Systems_Nordic44_Original_Case_Line_Opening: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Com..." onclick="showError(this)">&#10007; 12.8s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">14.9s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.SMIB_Examples.Example_1.Network1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_SMIB_Examples_Example_1_Network1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.mul..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.SMIB_Examples.Example_1.Network2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_SMIB_Examples_Example_1_Network2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker2.is = Complex.'-'.negate(breaker2.ir))); translate with scalarize = true to scalarize it in the frontend" onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.SMIB_Examples.Example_1.Network3</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_SMIB_Examples_Example_1_Network3: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.mul..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.SMIB_Examples.Example_1Mod.Network</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_SMIB_Examples_Example_1Mod_Network: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker.is = Complex.'-'.negate(breaker.ir))); translate with scalarize = true to scalarize it in the frontend" onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.DAEMode.SMIB_Examples.Example_2.Network</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_DAEMode_SMIB_Examples_Example_2_Network: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.mult..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.IEEE14.IEEE_14_Buses</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_IEEE14_IEEE_14_Buses: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: pwLinewithOpeningSending.ir = Complex.'*'.multiply(Complex.'-'.subtract(pwLinewithOpeningSending.vr, Complex.'*'.multiply(pwLinewithOpeni)); transl..." onclick="showError(this)">&#10007; 0.7s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.7s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.IEEE9.IEEE_9_Buses</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_IEEE9_IEEE_9_Buses: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2Openings.vr, pwLine2Openings.vs) = Complex.'*'.multiply(pwLine2Openings.Z, Complex.'-'.subtract(pwLine2Openin)); translat..." onclick="showError(this)">&#10007; 0.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.6s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.IEEE9.IEEE_9_Buses_Statcom</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_IEEE9_IEEE_9_Buses_Statcom: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_7_8.vr, line_7_8.vs) = Complex.'*'.multiply(line_7_8.Z, Complex.'-'.subtract(line_7_8.ir, Complex.'*'.multiply()); ..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.KundurSMIB.SMIB</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_KundurSMIB_SMIB: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_2.vr, line_2.vs) = Complex.'*'.multiply(line_2.Z, Complex.'-'.subtract(line_2.ir, Complex.'*'.multiply(line_2.v)); translate w..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.KundurSMIB.SMIB_AVR</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_KundurSMIB_SMIB_AVR: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_2.vr, line_2.vs) = Complex.'*'.multiply(line_2.Z, Complex.'-'.subtract(line_2.ir, Complex.'*'.multiply(line_2.v)); transla..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.KundurSMIB.SMIB_AVR_PSS</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_KundurSMIB_SMIB_AVR_PSS: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_2.vr, line_2.vs) = Complex.'*'.multiply(line_2.Z, Complex.'-'.subtract(line_2.ir, Complex.'*'.multiply(line_2.v)); tra..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Microgrids.IEEEMicrogrid.IEEEMicrogrid</td>
+  <td class="ok">&#10003; 0.4s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Microgrids_IEEEMicrogrid_IEEEMicrogrid: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(LoadLine1.vr, LoadLine1.vs) = Complex.'*'.multiply(LoadLine1.Z, Complex.'-'.subtract(LoadLine1.ir, Complex.'..." onclick="showError(this)">&#10007; 0.8s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Microgrids.UniversityCampus.CampusA.CampusGridA</td>
+  <td class="ok">&#10003; 0.2s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Microgrids_UniversityCampus_CampusA_CampusGridA: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: BreakerMicrogrid.is = Complex.'-'.negate(BreakerMicrogrid.ir))); translate with scalarize = true to scalarize it in the ..." onclick="showError(this)">&#10007; 2.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">2.6s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Microgrids.UniversityCampus.CampusB.CampusGridB</td>
+  <td class="ok">&#10003; 0.3s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Microgrids_UniversityCampus_CampusB_CampusGridB: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line30.vr, Line30.vs) = Complex.'*'.multiply(Line30.Z, Complex.'-'.subtract(Line30.ir, Complex.'*'...." onclick="showError(this)">&#10007; 1.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.8s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.N44.Base_Case.Nordic44_Base_Case</td>
+  <td class="ok">&#10003; 2.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_N44_Base_Case_Nordic44_Base_Case: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Complex.'-'.subtract(line_5402_6001..." onclick="showError(this)">&#10007; 13.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">15.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.N44.Original.Nordic44_Original_Case</td>
+  <td class="ok">&#10003; 2.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_N44_Original_Nordic44_Original_Case: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5402_6001.vr, line_5402_6001.vs) = Complex.'*'.multiply(line_5402_6001.Z, Complex.'-'.subtract(line_5402_6..." onclick="showError(this)">&#10007; 12.7s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">14.8s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.NamsskoganGrid.Grid_Model</td>
+  <td class="ok">&#10003; 0.2s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_NamsskoganGrid_Grid_Model: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line16_17.vr, Line16_17.vs) = Complex.'*'.multiply(Line16_17.Z, Complex.'-'.subtract(Line16_17.ir, Complex.'*'.multi)); t..." onclick="showError(this)">&#10007; 0.8s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.0s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.OpenCPS.Network</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_OpenCPS_Network: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker1.ir = Complex.'+'(Complex.'constructor'.fromReal(0.0, 0.0), Complex.'*'.multiply(Complex(0.0, 1.0), Complex.'constructor'.fromRea)); translate w..." onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.5s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.OpenCPS.Network_Expanded</td>
+  <td class="ok">&#10003; 0.3s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_OpenCPS_Network_Expanded: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker2.ir = Complex.'+'(Complex.'constructor'.fromReal(0.0, 0.0), Complex.'*'.multiply(Complex(0.0, 1.0), Complex.'constructor'.fromRea)); tr..." onclick="showError(this)">&#10007; 0.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.7s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.OpenCPS.Network_Expanded_Noise</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_OpenCPS_Network_Expanded_Noise: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker2.ir = Complex.'+'(Complex.'constructor'.fromReal(0.0, 0.0), Complex.'*'.multiply(Complex(0.0, 1.0), Complex.'constructor'.fromRea..." onclick="showError(this)">&#10007; 0.6s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.7s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.Discretization.FourthOrder_AVRII_Continuous</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_Discretization_FourthOrder_AVRII_Continuous: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.Discretization.FourthOrder_AVRII_Discrete</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_Discretization_FourthOrder_AVRII_Discrete: array preserving codegen not supported (array index reduction: UnsupportedLowering: an algebraic loop in a clocked partition (a variable its own equation reads at the tick): ([Symbol(&quot;aVRTypeII.vf&quot;)], aVRTypeII.vf := (pre(aVRTypeII.vf) - (((aVRTypeII.vf * (aVRTypeII.Ke + aVRTypeII.Se)) - aVRTypeII.vr) / aVRTypeII.Te))); backend scalarization: UnsupportedLowering: an algebraic loop in ..." onclick="showError(this)">&#10007; 1.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.0s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.Discretization.FourthOrder_AVRII_Discretized_Continuous</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_Discretization_FourthOrder_AVRII_Discretized_Continuous: array preserving codegen not supported (array index reduction: UnsupportedLowering: der() in an initial equation of a clocked discretized partition: ImplicitEuler; backend scalarization: UnsupportedLowering: der() in an initial equation of a clocked discretized partition: ImplicitEuler); translate with scalarize = true to scalarize it in the frontend" onclick="showError(this)">&#10007; 0.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.0s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FifthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FifthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, Co..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FifthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FifthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, C..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FifthOrder_AVRIII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FifthOrder_AVRIII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, ..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FourthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FourthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, C..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FourthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FourthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, ..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.FourthOrder_AVRIII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_FourthOrder_AVRIII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir,..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.SixthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_SixthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, Co..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.SixthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_SixthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, C..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.SixthOrder_AVRIII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_SixthOrder_AVRIII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, ..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.ThirdOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_ThirdOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, Co..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.ThirdOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_ThirdOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, C..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.ThreeArea.ThirdOrder_AVRIII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_ThreeArea_ThirdOrder_AVRIII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1to15.vr, pwLine1to15.vs) = Complex.'*'.multiply(pwLine1to15.Z, Complex.'-'.subtract(pwLine1to15.ir, ..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.FifthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_FifthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L5..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.FifthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_FifthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.FourthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_FourthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L..." onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.5s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.FourthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_FourthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, ..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.SixthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_SixthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L5..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.SixthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_SixthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L..." onclick="showError(this)">&#10007; 0.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.5s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.ThirdOrder_AVRI</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_ThirdOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L5..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoArea.ThirdOrder_AVRII</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoArea_ThirdOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(L527.vr, L527.vs) = Complex.'*'.multiply(L527.Z, Complex.'-'.subtract(L527.ir, Complex.'*'.multiply(L527.vr, L..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.FifthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_FifthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'.m..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.FifthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_FifthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.FourthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_FourthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.FourthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_FourthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.SixthOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_SixthOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'.m..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.SixthOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_SixthOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.ThirdOrder_AVRI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_ThirdOrder_AVRI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'.m..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.PSATSystems.TwoAreaOld.ThirdOrder_AVRII</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_PSATSystems_TwoAreaOld_ThirdOrder_AVRII: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_5_2.vr, line_5_2.vs) = Complex.'*'.multiply(line_5_2.Z, Complex.'-'.subtract(line_5_2.ir, Complex.'*'...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.RaPIdExperiments.Generator_Aggregation.Aggregated_system</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_RaPIdExperiments_Generator_Aggregation_Aggregated_system: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir,..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.RaPIdExperiments.Generator_Aggregation.Reference_system</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_RaPIdExperiments_Generator_Aggregation_Reference_system: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine3.vr, pwLine3.vs) = Complex.'*'.multiply(pwLine3.Z, Complex.'-'.subtract(pwLine3.ir, ..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.RaPIdExperiments.Line_Aggregation.Reference_system</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_RaPIdExperiments_Line_Aggregation_Reference_system: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine3.vr, pwLine3.vs) = Complex.'*'.multiply(pwLine3.Z, Complex.'-'.subtract(pwLine3.ir, Compl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.RaPIdExperiments.Mostar</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_RaPIdExperiments_Mostar: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine.vr, pwLine.vs) = Complex.'*'.multiply(pwLine.Z, Complex.'-'.subtract(pwLine.ir, Complex.'*'.multiply(pwLine.v)); tra..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.SevenBus.Network</td>
+  <td class="fail" data-error="BoundsError: attempt to access 0-element Vector{Expression} at index [1]" onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Tutorial.Example_1.Example_1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Tutorial_Example_1_Example_1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_2.vr, line_2.vs) = Complex.'*'.multiply(line_2.Z, Complex.'-'.subtract(line_2.ir, Complex.'*'.multiply(line_2.v))..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Tutorial.Example_2.Example_2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Tutorial_Example_2_Example_2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_2.vr, line_2.vs) = Complex.'*'.multiply(line_2.Z, Complex.'-'.subtract(line_2.ir, Complex.'*'.multiply(line_2.v))..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Tutorial.Example_3.Example_3</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Tutorial_Example_3_Example_3: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2Openings.vr, pwLine2Openings.vs) = Complex.'*'.multiply(pwLine2Openings.Z, Complex.'-'.subtract(pwLine2Openin))..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Tutorial.Example_4.Experiments.SMIB</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Tutorial_Example_4_Experiments_SMIB: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_04.vr, line_04.vs) = Complex.'*'.multiply(line_04.Z, Complex.'-'.subtract(line_04.ir, Complex.'*'.multiply..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.Tutorial.Example_4.Experiments.SMIBVarLoad</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_Tutorial_Example_4_Experiments_SMIBVarLoad: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(line_04.vr, line_04.vs) = Complex.'*'.multiply(line_04.Z, Complex.'-'.subtract(line_04.ir, Complex.'*'.m..." onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.5s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.TwoAreas.Two_Areas_PSAT</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_TwoAreas_Two_Areas_PSAT: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line10_11.vr, Line10_11.vs) = Complex.'*'.multiply(Line10_11.Z, Complex.'-'.subtract(Line10_11.ir, Complex.'*'.multi)); tra..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.TwoAreas.Two_Areas_PSSE</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_TwoAreas_Two_Areas_PSSE: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line5_4.vr, Line5_4.vs) = Complex.'*'.multiply(Line5_4.Z, Complex.'-'.subtract(Line5_4.ir, Complex.'*'.multiply(Line)); tra..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Examples.TwoAreas.Two_Areas_PSSE_AVR</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Examples_TwoAreas_Two_Areas_PSSE_AVR: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line5_4.vr, Line5_4.vs) = Complex.'*'.multiply(Line5_4.Z, Complex.'-'.subtract(Line5_4.ir, Complex.'*'.multiply(Line));..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Data.PowerPlant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Data.PowerPlant.Examples.Anderson</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Data_PowerPlant_Examples_Anderson: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); tr..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Data.PowerPlant.Examples.IEEE421</td>
+  <td class="fail" data-error="MetaModelicaGeneralException(&quot;Runtime defined generic Meta Modelica failure&quot;)" onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Banks.PSSE.CSVGN1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Banks.PSSE.CSVGN1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Banks_PSSE_CSVGN1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate wi..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Branches.Generic.ULTC</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Branches.Generic.ULTC</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Branches_Generic_ULTC: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line12_b.vr, Line12_b.vs) = Complex.'*'.multiply(Line12_b.Z, Complex.'-'.subtract(Line12_b.ir, Complex.'*'.multiply()); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Branches.PSAT.PhaseShiftingTransformer_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Branches.PSAT.PhaseShiftingTransformer_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 1.9s</td>
+  <td class="ok">&#10003; 1.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">3.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Branches.PSAT.ThreeWindingTransformer_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Branches.PSAT.ThreeWindingTransformer_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Branches_PSAT_ThreeWindingTransformer_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.mult..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Branches.PSAT.TwoWindingTransformer_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Branches.PSAT.TwoWindingTransformer_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Branches_PSAT_TwoWindingTransformer_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multip..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Branches.PSSE.TwoWindingTransformer</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Branches.PSSE.TwoWindingTransformer</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Branches_PSSE_TwoWindingTransformer: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pw..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.CGMES.ES.ExcSEXS</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.CGMES.ES.ExcSEXS</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_CGMES_ES_ExcSEXS: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.CGMES.TG.GovHydroIEEE0_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.CGMES.TG.GovHydroIEEE0_Test</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_CGMES_TG_GovHydroIEEE0_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(p..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.AVR.AVRTypeII_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.AVR.AVRTypeII_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_AVR_AVRTypeII_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.AVR.AVRTypeI_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.AVR.AVRTypeI_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_AVR_AVRTypeI_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi))..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.OEL.AVRTypeII_OEL_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.OEL.AVRTypeII_OEL_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_OEL_AVRTypeII_OEL_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(p..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.TG.TGTypeIII_test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.TG.TGTypeIII_test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_TG_TGTypeIII_test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi))..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.TG.TGTypeII_test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.TG.TGTypeII_test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_TG_TGTypeII_test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi));..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.TG.TGTypeIV_test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.TG.TGTypeIV_test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_TG_TGTypeIV_test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi));..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.TG.TGTypeI_test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.TG.TGTypeI_test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_TG_TGTypeI_test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); ..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSAT.TG.TGTypeVI_test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSAT.TG.TGTypeVI_test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSAT_TG_TGTypeVI_test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi));..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.COMP.IEEEVC</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.COMP.IEEEVC</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_COMP_IEEEVC: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.AC7B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.AC7B</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_AC7B: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 1.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.3s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.AC8B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.AC8B</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_AC8B: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.DC4B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.DC4B</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_DC4B: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESAC1A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESAC1A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESAC1A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESAC2A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESAC2A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESAC2A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESDC1A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESDC1A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESDC1A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESDC2A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESDC2A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESDC2A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESST1A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESST1A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESST1A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESST4B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESST4B</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESST4B: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ESURRY</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ESURRY</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ESURRY: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.EXAC1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.EXAC1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_EXAC1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.EXAC2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.EXAC2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_EXAC2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.EXBAS</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.EXBAS</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_EXBAS: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.EXNI</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.EXNI</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_EXNI: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.EXST1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.EXST1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_EXST1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.IEEET1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.IEEET1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_IEEET1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.IEEET2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.IEEET2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_IEEET2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.IEEEX1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.IEEEX1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_IEEEX1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.SCRX</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.SCRX</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_SCRX: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.SEXS</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.SEXS</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_SEXS: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.ST5B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.ST5B</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_ST5B: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.ES.URST5T</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.ES.URST5T</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_ES_URST5T: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.PSS.IEEEST</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.PSS.IEEEST</td>
+  <td class="fail" data-error="MetaModelicaGeneralException(&quot;Runtime defined generic Meta Modelica failure&quot;)" onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.PSS.PSS2A</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.PSS.PSS2A</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_PSS_PSS2A: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.PSS.PSS2B</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.PSS.PSS2B</td>
+  <td class="fail" data-error="BoundsError: attempt to access 0-element Vector{Expression} at index [1]" onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.GAST</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.GAST</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_GAST: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.GGOV1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.GGOV1</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_GGOV1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.GGOV1DU</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.GGOV1DU</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_GGOV1DU: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); trans..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.HYGOV</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.HYGOV</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_HYGOV: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.IEEEG1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.IEEEG1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_IEEEG1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.IEEEG2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.IEEEG2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_IEEEG2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.IEESGO</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.IEESGO</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_IEESGO: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.TGOV1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.TGOV1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_TGOV1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.WEHGOV</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.WEHGOV</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_WEHGOV: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.WPIDHY</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.WPIDHY</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_WPIDHY: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.TG.WSIEG1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.TG.WSIEG1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_TG_WSIEG1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transl..." onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Controls.PSSE.UEL.MNLEX2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Controls.PSSE.UEL.MNLEX2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Controls_PSSE_UEL_MNLEX2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); trans..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Events.TestBreaker</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Events.TestBreaker</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Events_TestBreaker: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLinePara.vr, pwLinePara.vs) = Complex.'*'.multiply(pwLinePara.Z, Complex.'-'.subtract(pwLinePara.ir, Complex.'*'.m)); translate w..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.FACTS.STATCOM_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.FACTS.STATCOM_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_FACTS_STATCOM_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLineInf.vr, pwLineInf.vs) = Complex.'*'.multiply(pwLineInf.Z, Complex.'-'.subtract(pwLineInf.ir, Complex.'*'.multi)); translate w..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.FACTS.TCSC_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.FACTS.TCSC_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_FACTS_TCSC_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLineInf3.vr, pwLineInf3.vs) = Complex.'*'.multiply(pwLineInf3.Z, Complex.'-'.subtract(pwLineInf3.ir, Complex.'*'.m)); translate with..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestExpRecovery</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestExpRecovery</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestExpRecovery: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi));..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestFreqDependent</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestFreqDependent</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestFreqDependent: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestMixed</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestMixed</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestMixed: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); trans..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestPQ</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestPQ</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestPQ: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); translat..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestThLoad</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestThLoad</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestThLoad: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestVoltDependant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestVoltDependant</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestVoltDependant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestZip</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestZip</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestZip: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Loads.PSAT.LoadTestZipJimma</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Loads.PSAT.LoadTestZipJimma</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Loads_PSAT_LoadTestZipJimma: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); tr..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.InductiveMotorIII_SIMBOpenline_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.InductiveMotorIII_SIMBOpenline_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_InductiveMotorIII_SIMBOpenline_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.InductiveMotorI_SIMBOpenline_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.InductiveMotorI_SIMBOpenline_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_InductiveMotorI_SIMBOpenline_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.InductiveMotorV_SIMBOpenline_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.InductiveMotorV_SIMBOpenline_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_InductiveMotorV_SIMBOpenline_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order2test2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order2test2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order2test2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order2test2_perturbation</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order2test2_perturbation</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order2test2_perturbation: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order3test2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order3test2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order3test2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order3test2_AVR</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order3test2_AVR</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order3test2_AVR: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); ..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order3test2_TG</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order3test2_TG</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order3test2_TG: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); t..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order3test2_perturbation</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order3test2_perturbation</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order3test2_perturbation: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order4test2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order4test2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order4test2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order4test2_AVR</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order4test2_AVR</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order4test2_AVR: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); ..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order4test2_TG</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order4test2_TG</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order4test2_TG: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); t..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order4test2_perturbation</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order4test2_perturbation</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order4test2_perturbation: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order5test2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order5test2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order5test2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSAT.Order6test2</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSAT.Order6test2</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSAT_Order6test2: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine4.vr, pwLine4.vs) = Complex.'*'.multiply(pwLine4.Z, Complex.'-'.subtract(pwLine4.ir, Complex.'*'.multiply(pwLi)); tran..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENCLS</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENCLS</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSSE_GENCLS: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENROE</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENROE</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSSE_GENROE: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENROU</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENROU</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSSE_GENROU: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENSAE</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENSAE</td>
+  <td class="fail" data-error="MetaModelicaGeneralException(&quot;Runtime defined generic Meta Modelica failure&quot;)" onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.0s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENSAL</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENSAL</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSSE_GENSAL: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Machines.PSSE.GENTPJ</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Machines.PSSE.GENTPJ</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Machines_PSSE_GENTPJ: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Renewable.PSSE.BESSPlant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Renewable.PSSE.BESSPlant</td>
+  <td class="ok">&#10003; 0.4s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Renewable_PSSE_BESSPlant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); trans..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.6s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Renewable.PSSE.PVPlant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Renewable.PSSE.PVPlant</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Renewable_PSSE_PVPlant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Renewable.PSSE.PVPlantSolarIrradiance</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Renewable.PSSE.PVPlantSolarIrradiance</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Renewable_PSSE_PVPlantSolarIrradiance: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(..." onclick="showError(this)">&#10007; 0.5s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.5s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Renewable.PSSE.WindPlant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Renewable.PSSE.WindPlant</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Renewable_PSSE_WindPlant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); trans..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.3s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Solar.PSAT.SolarPQTest</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Solar.PSAT.SolarPQTest</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Solar_PSAT_SolarPQTest: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Solar.PSAT.SolarPVTest</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Solar.PSAT.SolarPVTest</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Solar_PSAT_SolarPVTest: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); transla..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Solar.PowerFactory.DIgSILENT_PV</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Solar.PowerFactory.DIgSILENT_PV</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 33.7s</td>
+  <td class="fail" data-error="Simulation retcode: InitialFailure" onclick="showError(this)">&#10007; 19.9s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">53.6s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Solar.PowerFactory.PVD1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Solar.PowerFactory.PVD1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="ok">&#10003; 2.6s</td>
+  <td class="ok">&#10003; 1.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">3.9s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesBehindImpedance.VSource</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesBehindImpedance.VSource</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesBehindImpedance_VSource: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesBehindImpedance.VSourceIO</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesBehindImpedance.VSourceIO</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesBehindImpedance_VSourceIO: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multip..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesBehindImpedance.VSourceIO_StartFromExternal_using_RealExpression</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesBehindImpedance.VSourceIO_StartFromExternal_using_RealExpression</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesBehindImpedance_VSourceIO_StartFromExternal_using_RealExpression: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'...." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesBehindImpedance.VSourceIO_StartFromExternal_using_VSIO_outputs</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesBehindImpedance.VSourceIO_StartFromExternal_using_VSIO_outputs</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesBehindImpedance_VSourceIO_StartFromExternal_using_VSIO_outputs: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.su..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesWithRealInputs.CurrentSourceReImInputConstant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesWithRealInputs.CurrentSourceReImInputConstant</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesWithRealInputs_CurrentSourceReImInputConstant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputConstant</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputConstant</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesWithRealInputs_VoltageSourceReImInputConstant: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryImag</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryImag</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesWithRealInputs_VoltageSourceReImInputVaryImag: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryReal</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryReal</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesWithRealInputs_VoltageSourceReImInputVaryReal: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryRealAndImag</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Sources.SourcesWithRealInputs.VoltageSourceReImInputVaryRealAndImag</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Sources_SourcesWithRealInputs_VoltageSourceReImInputVaryRealAndImag: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwL..." onclick="showError(this)">&#10007; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.ThreePhase.IEEE13</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.ThreePhase.IEEE13</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_ThreePhase_IEEE13: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: breaker3.is = Complex.'-'.negate(breaker3.ir))); translate with scalarize = true to scalarize it in the frontend" onclick="showError(this)">&#10007; 1.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">1.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.ThreePhase.IEEE4</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.ThreePhase.IEEE4</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="ok">&#10003; 2.0s</td>
+  <td class="ok">&#10003; 0.3s</td>
+  <td class="na">&mdash;</td>
+  <td class="time">2.4s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.ThreePhase.IEEE4_MonoTri</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.ThreePhase.IEEE4_MonoTri</td>
+  <td class="ok">&#10003; 0.1s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_ThreePhase_IEEE4_MonoTri: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(Line1.vr, Line1.vs) = Complex.'*'.multiply(Line1.Z, Complex.'-'.subtract(Line1.ir, Complex.'*'.multiply(Line1.vr, Li)); trans..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Wind.GE.WT_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Wind.GE.WT_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Wind_GE_WT_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine1.vr, pwLine1.vs) = Complex.'*'.multiply(pwLine1.Z, Complex.'-'.subtract(pwLine1.ir, Complex.'*'.multiply(pwLi)); translate with..." onclick="showError(this)">&#10007; 0.4s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.4s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Wind.PSAT.WT_Test</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Wind.PSAT.WT_Test</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Wind_PSAT_WT_Test: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine.vr, pwLine.vs) = Complex.'*'.multiply(pwLine.Z, Complex.'-'.subtract(pwLine.ir, Complex.'*'.multiply(pwLine.v)); translate wi..." onclick="showError(this)">&#10007; 0.2s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.2s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Wind.PSSE.WT4G.WT4E1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Wind.PSSE.WT4G.WT4E1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Wind_PSSE_WT4G_WT4E1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.1s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+<tr class="domain-header">
+  <td colspan="6"><strong>Tests.Wind.PSSE.WT4G.WT4G1</strong></td>
+</tr>
+<tr class="">
+  <td class="model-name">OpenIPSL.Tests.Wind.PSSE.WT4G.WT4G1</td>
+  <td class="ok">&#10003; 0.0s</td>
+  <td class="fail" data-error="ARRAY_PRESERVING_CODEGEN_NOT_SUPPORTED: OpenIPSL_Tests_Wind_PSSE_WT4G_WT4G1: array preserving codegen not supported (array index reduction: index reduction does not handle a RECORD_EQUATION with arrays kept; backend scalarization: the model scalarized by the backend does not translate (UnsupportedLowering: this equation in an if-equation's branch: Complex.'-'.subtract(pwLine2.vr, pwLine2.vs) = Complex.'*'.multiply(pwLine2.Z, Complex.'-'.subtract(pwLine2.ir, Complex.'*'.multiply(pwLi)); translate..." onclick="showError(this)">&#10007; 0.0s</td>
+  <td class="na">&mdash;</td>
+  <td class="na">&mdash;</td>
+  <td class="time">0.1s</td>
+</tr>
+
+</tbody>
+</table>
+<div id="error-modal">
+  <div id="error-modal-box">
+    <button id="error-modal-close" onclick="closeError()" title="Close">&times;</button>
+    <strong id="error-modal-title">Error detail</strong>
+    <pre id="error-modal-text"></pre>
+  </div>
+</div>
+<script>
+  function showError(td) {
+    var msg = td.getAttribute('data-error');
+    if (!msg) return;
+    document.getElementById('error-modal-title').textContent = 'Error detail';
+    document.getElementById('error-modal-text').className = '';
+    document.getElementById('error-modal-text').textContent = msg;
+    document.getElementById('error-modal').classList.add('open');
+  }
+  function closeError() {
+    document.getElementById('error-modal').classList.remove('open');
+  }
+  document.getElementById('error-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeError();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeError();
+  });
+</script>
+<script>
+var SIGNALS = null, SIGNALS_LOADING = null, SVGNS = 'http://www.w3.org/2000/svg';
+function signalFiles() {
+  var page = location.pathname.split('/').pop() || 'report.html';
+  return [page.replace(/\.html?$/, '') + '.signals.json', 'signals.json'];
+}
+function loadSignals() {
+  if (SIGNALS) return Promise.resolve(SIGNALS);
+  if (SIGNALS_LOADING) return SIGNALS_LOADING;
+  SIGNALS_LOADING = signalFiles().reduce(function(p, f) {
+    return p.catch(function() {
+      return fetch(f).then(function(r) { if (!r.ok) throw new Error(f + ': ' + r.status); return r.json(); });
+    });
+  }, Promise.reject(new Error('none'))).then(function(d) { SIGNALS = d.models; return SIGNALS; });
+  SIGNALS_LOADING.catch(function() { SIGNALS_LOADING = null; });
+  return SIGNALS_LOADING;
+}
+function toggleSignals(a) {
+  var tr = a.closest('tr'), next = tr.nextElementSibling;
+  if (next && next.classList.contains('sig-row')) { next.remove(); return false; }
+  var row = document.createElement('tr'), td = document.createElement('td');
+  row.className = 'sig-row'; td.colSpan = 6; row.appendChild(td);
+  tr.parentNode.insertBefore(row, tr.nextSibling);
+  td.textContent = 'Loading the signals...';
+  var model = a.getAttribute('data-model');
+  loadSignals().then(function(models) { showModel(td, models, model); },
+                     function() { askForFile(td, model); });
+  return false;
+}
+function showModel(td, models, model) {
+  if (models[model]) renderSignals(td, models[model]);
+  else td.textContent = 'The signals file has no signals of ' + model + '.';
+}
+function askForFile(td, model) {
+  td.textContent = '';
+  var p = document.createElement('p');
+  p.textContent = 'The signals could not be read. The coverage site keeps them (signals.json) for the latest 5 runs ' +
+    'of a version; a report opened from disk cannot read the .signals.json beside it: choose that file here. ';
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = function() {
+    if (!input.files[0]) return;
+    input.files[0].text().then(function(t) { SIGNALS = JSON.parse(t).models; showModel(td, SIGNALS, model); });
+  };
+  p.appendChild(input); td.appendChild(p);
+}
+function fmt(x) {
+  if (x === null || x === undefined) return '—';
+  var a = Math.abs(x);
+  return (a !== 0 && (a >= 1e5 || a < 1e-3)) ? x.toExponential(3) : String(Number(x.toPrecision(6)));
+}
+function fmtAxis(x) {
+  var a = Math.abs(x);
+  return (a !== 0 && (a >= 1e5 || a < 1e-3)) ? x.toExponential(2) : String(Number(x.toPrecision(4)));
+}
+function sampleTimes(s, m) {
+  var T = s.time || m.time, n = T[2], t = [];
+  for (var i = 0; i < n; i++) t.push(n > 1 ? T[0] + i * (T[1] - T[0]) / (n - 1) : T[0]);
+  return t;
+}
+function renderSignals(td, m) {
+  td.textContent = '';
+  var sigs = m.signals.slice().sort(function(x, y) { return x.passed - y.passed; });   // failed first
+  var failed = sigs.filter(function(s) { return !s.passed; }).length;
+  var head = document.createElement('div');
+  head.className = 'sig-head';
+  var banded = sigs.some(function(s) { return s.low; });   // OpenModelica's comparison (older files: atol/reltol)
+  head.innerHTML = '<span class="sig-key-ref">— reference</span> &nbsp; <span class="sig-key-omjl">- - OM.jl</span> &nbsp; ' +
+    (banded ? 'grey: the band OM.jl must stay in, as OpenModelica\'s library testing compares (0.1 % of the time span wide ' +
+              'in time, 0.3 % of the value and of the signal\'s range high); checked at every time of the reference except ' +
+              'its events; red: where OM.jl is furthest outside it' :
+              'grey: the tolerance around the reference (atol ' + fmt(m.atol) + ', reltol ' + fmt(m.reltol) + ')') +
+    '; values with 6 significant digits. ';
+  head.appendChild(document.createTextNode(sigs.length + ' signals compared, ' + failed + ' failed' +
+    (m.validated ? '.' : '; the model did not validate.') + ' Point at a plot to read its values; click a name for all of them.'));
+  td.appendChild(head);
+  var grid = document.createElement('div');
+  grid.className = 'sig-grid';
+  sigs.forEach(function(s) { grid.appendChild(signalCard(s, m)); });
+  td.appendChild(grid);
+}
+function signalCard(s, m) {
+  var card = document.createElement('div'), title = document.createElement('div'), name = document.createElement('a');
+  var mark = document.createElement('span'), stats = document.createElement('div'), readout = document.createElement('div');
+  card.className = 'sig-card ' + (s.passed ? 'sig-pass' : 'sig-fail');
+  title.className = 'sig-title';
+  name.href = '#'; name.textContent = s.name; name.title = 'All compared values';
+  name.onclick = function() { showValues(s, m); return false; };
+  mark.className = s.passed ? 'sig-mark-ok' : 'sig-mark-fail';
+  mark.textContent = s.passed ? ' ✓' : (s.low ? ' ✗ outside the band' : ' ✗ outside the tolerance');
+  title.appendChild(name); title.appendChild(mark);
+  stats.className = 'sig-stats';
+  stats.textContent = signalStats(s);
+  readout.className = 'sig-readout';
+  card.appendChild(title); card.appendChild(stats); card.appendChild(signalPlot(s, m, readout)); card.appendChild(readout);
+  return card;
+}
+function signalStats(s) {
+  if (s.max_abs_err === null) return 'not compared: no OM.jl value';
+  var text = 'max |error| ' + fmt(s.max_abs_err) + ' (relative ' + fmt(s.max_rel_err) + ')';
+  if (s.compared === undefined) {   // older files: where the largest error is (0 when none)
+    if (s.worst_time !== null && s.worst_time !== undefined) text += ' at t = ' + fmt(s.worst_time);
+    return text;
+  }
+  return text + (s.outside ?
+    '; outside the band at ' + s.outside + ' of ' + s.compared + ' times, furthest at t = ' + fmt(s.worst_time) +
+      ' (OM.jl ' + fmt(s.worst_omjl) + ', reference ' + fmt(s.worst_reference) + ')' :
+    '; in the band at all ' + (s.compared - (s.events || 0)) + ' compared times' +
+      (s.events ? ' (' + s.events + ' at events, not compared)' : ''));
+}
+function svgEl(name, attrs) {
+  var e = document.createElementNS(SVGNS, name);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function svgText(svg, x, y, s, anchor) {
+  var t = svgEl('text', {x: x, y: y, 'text-anchor': anchor});
+  t.textContent = s; svg.appendChild(t);
+}
+function svgLine(svg, t, v, X, Y, cls) {   // one polyline per run of values (none where null)
+  var pts = [];
+  function flush() { if (pts.length) svg.appendChild(svgEl('polyline', {points: pts.join(' '), 'class': cls})); pts = []; }
+  for (var i = 0; i < t.length; i++) { if (v[i] === null) flush(); else pts.push(X(t[i]) + ',' + Y(v[i])); }
+  flush();
+}
+function signalPlot(s, m, readout) {
+  var W = 360, H = 160, L = 62, R = 8, T = 8, B = 20;
+  var t = sampleTimes(s, m), ref = s.reference, om = s.omjl, n = t.length, i;
+  var tol = ref.map(function(v) { return v === null ? null : m.atol + m.reltol * Math.abs(v); });
+  var high = s.high || ref.map(function(v, k) { return v === null ? null : v + tol[k]; });   // older files: atol/reltol
+  var low = s.low || ref.map(function(v, k) { return v === null ? null : v - tol[k]; });
+  var ys = [];
+  for (i = 0; i < n; i++) {
+    if (high[i] !== null && low[i] !== null) ys.push(high[i], low[i]);
+    if (om[i] !== null) ys.push(om[i]);
+  }
+  var worstOmjl = !s.passed && s.worst_omjl !== undefined && s.worst_omjl !== null;   // where it is, between samples too
+  if (worstOmjl) ys.push(s.worst_omjl);
+  var y0 = ys.length ? Math.min.apply(null, ys) : 0, y1 = ys.length ? Math.max.apply(null, ys) : 1;
+  if (y1 - y0 <= 1e-12 * Math.max(1, Math.abs(y1))) { var c = y0, d = 1e-6 * Math.max(1, Math.abs(c)); y0 = c - d; y1 = c + d; }
+  var pad = 0.05 * (y1 - y0); y0 -= pad; y1 += pad;
+  var t0 = t[0], t1 = t[n - 1] > t0 ? t[n - 1] : t0 + 1;
+  function X(x) { return L + (x - t0) / (t1 - t0) * (W - L - R); }
+  function Y(y) { return T + (y1 - y) / (y1 - y0) * (H - T - B); }
+  var svg = svgEl('svg', {viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'sig-plot'});
+  svg.appendChild(svgEl('rect', {x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'frame'}));
+  var up = [], lo = [];
+  for (i = 0; i < n; i++) if (high[i] !== null && low[i] !== null) { up.push(X(t[i]) + ',' + Y(high[i])); lo.unshift(X(t[i]) + ',' + Y(low[i])); }
+  if (up.length) svg.appendChild(svgEl('polygon', {points: up.concat(lo).join(' '), 'class': 'band'}));
+  svgLine(svg, t, ref, X, Y, 'ref');
+  svgLine(svg, t, om, X, Y, 'omjl');
+  if (worstOmjl && s.worst_time !== null) {
+    svg.appendChild(svgEl('line', {x1: X(s.worst_time), x2: X(s.worst_time), y1: T, y2: H - B, 'class': 'worst-line'}));
+    svg.appendChild(svgEl('circle', {cx: X(s.worst_time), cy: Y(s.worst_omjl), r: 4, 'class': 'worst'}));
+  } else if (!s.passed && s.worst_time !== null && s.worst_time !== undefined) {   // older files: the nearest sample
+    var w = Math.round((s.worst_time - t0) / (t1 - t0) * (n - 1));
+    w = Math.max(0, Math.min(n - 1, w));
+    if (om[w] !== null) svg.appendChild(svgEl('circle', {cx: X(t[w]), cy: Y(om[w]), r: 4, 'class': 'worst'}));
+  }
+  svgText(svg, L - 4, T + 9, fmtAxis(y1 - pad), 'end');
+  svgText(svg, L - 4, H - B, fmtAxis(y0 + pad), 'end');
+  svgText(svg, L, H - 5, fmtAxis(t[0]), 'start');
+  svgText(svg, W - R, H - 5, 't = ' + fmtAxis(t[n - 1]), 'end');
+  var cursor = svgEl('line', {y1: T, y2: H - B, 'class': 'cursor', visibility: 'hidden'});
+  svg.appendChild(cursor);
+  var hit = svgEl('rect', {x: L, y: T, width: W - L - R, height: H - T - B, fill: 'transparent'});
+  hit.addEventListener('mousemove', function(ev) {
+    var box = svg.getBoundingClientRect(), x = (ev.clientX - box.left) * W / box.width;
+    var k = Math.max(0, Math.min(n - 1, Math.round((x - L) / (W - L - R) * (n - 1))));
+    cursor.setAttribute('x1', X(t[k])); cursor.setAttribute('x2', X(t[k])); cursor.setAttribute('visibility', 'visible');
+    readout.textContent = 't = ' + fmt(t[k]) + '  reference ' + fmt(ref[k]) + '  OM.jl ' + fmt(om[k]) +
+      (ref[k] !== null && om[k] !== null ? '  |diff| ' + fmt(Math.abs(om[k] - ref[k])) : '');
+  });
+  hit.addEventListener('mouseleave', function() { cursor.setAttribute('visibility', 'hidden'); readout.textContent = ''; });
+  svg.appendChild(hit);
+  return svg;
+}
+function showValues(s, m) {
+  var t = sampleTimes(s, m), lines = [];
+  function pad(text) { return (text + '                ').slice(0, 16); }
+  lines.push(pad('t') + pad('reference') + pad('OM.jl') + pad('|diff|') + (s.low ? pad('band low') + 'band high' : ''));
+  for (var i = 0; i < t.length; i++) {
+    var r = s.reference[i], o = s.omjl[i];
+    lines.push(pad(fmt(t[i])) + pad(fmt(r)) + pad(fmt(o)) + (r !== null && o !== null ? pad(fmt(Math.abs(o - r))) : pad('—')) +
+               (s.low ? pad(fmt(s.low[i])) + fmt(s.high[i]) : ''));
+  }
+  document.getElementById('error-modal-title').textContent = s.name + ': the compared values';
+  var pre = document.getElementById('error-modal-text');
+  pre.className = 'values'; pre.textContent = lines.join('\n');
+  document.getElementById('error-modal').classList.add('open');
+}
+
+</script>
+</body>
+</html>
