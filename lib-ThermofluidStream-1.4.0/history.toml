@@ -1,0 +1,12 @@
+badge = "simulate"
+library = "ThermofluidStream 1.4.0"
+
+[[runs]]
+backend = 180
+commits = ["OM.jl 898bf35", "ImmutableList.jl e4e35af", "MetaModelica.jl 76ec6cf", "OMBackend.jl d6cb8fc", "OMFrontend.jl 213ff2b", "OMLibraryTesting.jl ad2f55d", "OMRuntimeExternalC.jl 65c6b0a", "OpenModelicaParser.jl 71cf3ae"]
+date = "2026-11-27"
+frontend = 202
+models = 214
+note = "No-skip run on GitHub Actions (ubuntu-latest, Julia 1.13), 3 shards of 1 workers, 600 s per model"
+simulate = 136
+validate = 0
