@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OM.jl coverage</title><style>:root { --bg: #ffffff; --fg: #111418; --muted: #5b6470; --line: #d9dee5; --accent: #1f5fa8;
+        --bar: #e8eef6; --frontend: #7aa7d9; --backend: #4f86c6; --simulate: #2c66ab; --validate: #0f3f7a; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f1216; --fg: #e8ebef; --muted: #9aa4b0; --line: #2a313a; --accent: #7fb2ec;
+          --bar: #1b222b; --frontend: #3d6a99; --backend: #4f86c6; --simulate: #7aa7d9; --validate: #b5d2f2; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+       font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.6em; margin: 0 0 4px; } h2 { font-size: 1.2em; margin: 32px 0 8px; }
+p.lead, .muted { color: var(--muted); }
+a { color: var(--accent); }
+nav { margin-bottom: 16px; } nav a, nav strong { margin-right: 16px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 600; color: var(--muted); }
+.funnel { display: grid; grid-template-columns: 6em 1fr 8.5em; gap: 6px 12px; align-items: center; }
+.funnel .track { background: var(--bar); height: 14px; border-radius: 3px; overflow: hidden; }
+.funnel .fill { height: 100%; }
+.funnel .num { text-align: right; font-variant-numeric: tabular-nums; }
+svg text { fill: var(--muted); font-size: 11px; }
+.legend span { display: inline-block; margin-right: 14px; } .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 5px; border-radius: 2px; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
+pre { background: var(--bar); padding: 10px 12px; border-radius: 4px; overflow-x: auto; }
+.analysis td { white-space: normal; }
+</style></head>
+<body><main>
+<nav><a href="../">MSL 3.2.3</a><a href="../msl-4.1.0/">MSL 4.1.0</a><a href="../lib-BusinessSimulation-2.2.0/">BusinessSimulation 2.2.0</a><a href="../lib-Chemical-2.0.0/">Chemical 2.0.0</a><a href="../lib-DeltaRobot-1.0.2/">DeltaRobot 1.0.2</a><a href="../lib-HanserModelica-2.0.1/">HanserModelica 2.0.1</a><a href="../lib-ModelicaByExample-0.6.0/">ModelicaByExample 0.6.0</a><strong>ModelicaTest 4.1.0+maint.om</strong><a href="../lib-OpenIPSL-3.1.0/">OpenIPSL 3.1.0</a><a href="../lib-Pharmacolibrary-25.9.0/">Pharmacolibrary 25.9.0</a><a href="../lib-PhotoVoltaics-2.1.0/">PhotoVoltaics 2.1.0</a><a href="../lib-Physiolibrary-3.0.0/">Physiolibrary 3.0.0</a><a href="../lib-PlanarMechanics-1.7.0/">PlanarMechanics 1.7.0</a><a href="../lib-PowerGrids-1.0.3/">PowerGrids 1.0.3</a><a href="../lib-PowerSystems-2.0.0/">PowerSystems 2.0.0</a><a href="../lib-StewartPlatform-1.0.2/">StewartPlatform 1.0.2</a><a href="../lib-SystemDynamics-2.1.2/">SystemDynamics 2.1.2</a><a href="../lib-VehicleInterfaces-2.0.2/">VehicleInterfaces 2.0.2</a></nav>
+<h1>OM.jl coverage of the ModelicaTest 4.1.0+maint.om examples</h1>
+<p class="lead">Each experiment model goes through OM.jl's pipeline: flatten (frontend), translate (backend), simulate, and validate against the reference trajectories. Measured by <a href="https://github.com/OpenModelica/OMLibraryTesting.jl">OMLibraryTesting.jl</a>.</p>
+<h2>Latest: <a href="runs/2026-11-27/">2026-11-27</a>, 608 models</h2>
+<div class="funnel">
+<div>frontend</div><div class="track"><div class="fill" style="width: 98.5%; background: var(--frontend)"></div></div><div class="num">599 · 98.5 %</div>
+<div>backend</div><div class="track"><div class="fill" style="width: 89.5%; background: var(--backend)"></div></div><div class="num">544 · 89.5 %</div>
+<div>simulate</div><div class="track"><div class="fill" style="width: 84.7%; background: var(--simulate)"></div></div><div class="num">515 · 84.7 %</div>
+<div>validate</div><div class="track"><div class="fill" style="width: 61.3%; background: var(--validate)"></div></div><div class="num">373 · 61.3 %</div>
+</div>
+
+<h2>Per run</h2><svg viewBox="0 0 900 220" width="100%" role="img" aria-label="Coverage per run">
+<line x1="40" x2="888" y1="194.0" y2="194.0" style="stroke: var(--line)"/><text x="34" y="198.0" text-anchor="end">0%</text>
+<line x1="40" x2="888" y1="148.0" y2="148.0" style="stroke: var(--line)"/><text x="34" y="152.0" text-anchor="end">25%</text>
+<line x1="40" x2="888" y1="102.0" y2="102.0" style="stroke: var(--line)"/><text x="34" y="106.0" text-anchor="end">50%</text>
+<line x1="40" x2="888" y1="56.0" y2="56.0" style="stroke: var(--line)"/><text x="34" y="60.0" text-anchor="end">75%</text>
+<line x1="40" x2="888" y1="10.0" y2="10.0" style="stroke: var(--line)"/><text x="34" y="14.0" text-anchor="end">100%</text>
+<text x="464.0" y="212" text-anchor="middle">2026-11-27</text>
+<circle cx="464.0" cy="12.7" r="3" style="fill: var(--frontend)"><title>2026-11-27 frontend 599/608</title></circle>
+<circle cx="464.0" cy="29.4" r="3" style="fill: var(--backend)"><title>2026-11-27 backend 544/608</title></circle>
+<circle cx="464.0" cy="38.1" r="3" style="fill: var(--simulate)"><title>2026-11-27 simulate 515/608</title></circle>
+<circle cx="464.0" cy="81.1" r="3" style="fill: var(--validate)"><title>2026-11-27 validate 373/608</title></circle>
+</svg>
+<div class="legend muted"><span><i style="background: var(--frontend)"></i>frontend</span><span><i style="background: var(--backend)"></i>backend</span><span><i style="background: var(--simulate)"></i>simulate</span><span><i style="background: var(--validate)"></i>validate</span></div>
+
+<div class="table-wrap"><table><tr><th>Date</th><th>Models</th><th>frontend</th><th>backend</th><th>simulate</th><th>validate</th><th></th></tr>
+<tr><td><a href="runs/2026-11-27/">2026-11-27</a></td><td>608</td><td>599 <span class="muted">(98.5 %)</span></td><td>544 <span class="muted">(89.5 %)</span></td><td>515 <span class="muted">(84.7 %)</span></td><td>373 <span class="muted">(61.3 %)</span></td><td><a href="runs/2026-11-27/report.html">per model</a></td></tr>
+</table></div>
+
+</main></body></html>
